@@ -1,0 +1,13 @@
+{
+  "name": "news-engine-git-worker",
+  "version": "1.0.0",
+  "type": "module",
+  "private": true,
+  "scripts": { "start": "node index.js" },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.32.0",
+    "dotenv": "^16.4.0",
+    "google-trends-api": "^4.9.2",
+    "simple-git": "^3.27.0"
+  }
+}
