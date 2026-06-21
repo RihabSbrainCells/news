@@ -2,6 +2,8 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { marked } from "marked";
 import { getArticle, getAllSlugs } from "../../../lib/content";
+import { countryName, flagEmoji } from "../../../lib/countries";
+import { newsArticleJsonLd, breadcrumbJsonLd } from "../../../lib/seo";
 
 // fully static — no DB, no ISR needed; rebuild happens on git push
 export const dynamicParams = false;
@@ -16,12 +18,18 @@ export function generateMetadata({ params }) {
   return {
     title: a.title,
     description: a.summary,
+    alternates: { canonical: `/article/${a.slug}` },
     openGraph: {
       title: a.title,
       description: a.summary,
       type: "article",
       publishedTime: a.date,
       images: a.cover ? [a.cover] : [],
+    },
+    twitter: {
+      card: a.cover ? "summary_large_image" : "summary",
+      title: a.title,
+      description: a.summary,
     },
   };
 }
@@ -36,13 +44,37 @@ export default function ArticlePage({ params }) {
   if (!a) notFound();
   const html = marked.parse(a.body);
 
+  const breadcrumbItems = [{ name: "Home", path: "/" }];
+  if (a.country) {
+    breadcrumbItems.push({
+      name: countryName(a.country.toUpperCase()),
+      path: `/country/${a.country.toLowerCase()}`,
+    });
+  }
+  breadcrumbItems.push({ name: a.title, path: `/article/${a.slug}` });
+
+  const articleLd = newsArticleJsonLd(a);
+  const breadcrumbLd = breadcrumbJsonLd(breadcrumbItems);
+
   return (
     <article className="article">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
+      />
       <Link href="/" className="back">← All stories</Link>
 
       <header className="article__head">
         <div className="article__meta">
-          {a.country && <span className="tag">{a.country}</span>}
+          {a.country && (
+            <Link href={`/country/${a.country.toLowerCase()}`} className="tag">
+              {flagEmoji(a.country.toUpperCase())} {countryName(a.country.toUpperCase())}
+            </Link>
+          )}
           <time>{fmt(a.date)}</time>
         </div>
         <h1>{a.title}</h1>

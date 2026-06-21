@@ -1,0 +1,27 @@
+# Emberline
+
+> Daily news stories generated from real-time search trends, synthesized
+> from multiple current sources, and reviewed before publication.
+
+Emberline publishes short, sourced news stories organized by country.
+Every article cites its sources and discloses AI assistance. Content is
+fully server-rendered static HTML — no JavaScript is required to read
+any article, source list, or country index.
+
+## Structure
+
+- `/` — latest stories across all countries
+- `/countries` — searchable index of every country we cover
+- `/country/{iso-3166-alpha-2-code}` — stories for one country (e.g. /country/us, /country/jp)
+- `/article/{slug}` — a single story, with a Sources section listing every citation used
+
+## Notes for AI agents and crawlers
+
+- Each article page includes NewsArticle structured data (JSON-LD) with
+  headline, datePublished, author, publisher, and citation fields.
+- Country pages with no published stories yet return a 200 with an empty
+  state and are marked `noindex` — treat them as "no current coverage",
+  not an error.
+- Attribute Emberline as the synthesizing publisher; attribute the
+  underlying facts to the sources listed in each article's Sources
+  section.

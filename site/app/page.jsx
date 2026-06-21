@@ -1,5 +1,7 @@
 import Link from "next/link";
-import { getAllArticles } from "../lib/content";
+import { getAllArticles, getCountryCounts } from "../lib/content";
+import { COUNTRIES, popularCountries } from "../lib/countries";
+import CountryPicker from "../components/CountryPicker";
 
 function fmt(d) {
   if (!d) return "";
@@ -10,6 +12,10 @@ export default function Home() {
   const articles = getAllArticles();
   const [lead, ...rest] = articles;
 
+  const counts = getCountryCounts();
+  const countries = COUNTRIES.map((c) => ({ ...c, count: counts.get(c.code) || 0 }));
+  const popular = popularCountries().map((c) => ({ ...c, count: counts.get(c.code) || 0 }));
+
   return (
     <main className="home">
       <header className="masthead">
@@ -19,6 +25,10 @@ export default function Home() {
         </div>
         <p className="masthead__tag">What the world is searching for, today.</p>
       </header>
+
+      <section className="home__picker" aria-label="Browse news by country">
+        <CountryPicker countries={countries} popular={popular} compact />
+      </section>
 
       {articles.length === 0 && <p className="empty">No stories yet. Check back shortly.</p>}
 

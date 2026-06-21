@@ -46,3 +46,19 @@ export function getArticle(slug) {
 export function getAllSlugs() {
   return readAll().map((a) => a.slug);
 }
+
+export function getArticlesByCountry(code) {
+  return getAllArticles().filter((a) => a.country.toUpperCase() === code.toUpperCase());
+}
+
+// Country codes that currently have at least one article, with counts —
+// drives which /country pages are statically generated and indexable.
+export function getCountryCounts() {
+  const counts = new Map();
+  for (const a of readAll()) {
+    if (!a.country) continue;
+    const code = a.country.toUpperCase();
+    counts.set(code, (counts.get(code) || 0) + 1);
+  }
+  return counts;
+}
