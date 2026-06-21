@@ -1,9 +1,15 @@
 import Link from "next/link";
 import { getAllArticles, getCountryCounts } from "../lib/content";
-import { COUNTRIES, popularCountries, countryName } from "../lib/countries";
+import { COUNTRIES, countryName } from "../lib/countries";
 import CountryPicker from "../components/CountryPicker";
+import TrendingCountries from "../components/TrendingCountries";
 import WorldMap from "../components/WorldMap";
 import CoverImage from "../components/CoverImage";
+
+// Below this, the hero subhead names the exact coverage count; below it,
+// a specific number reads as "barely started" rather than "global", so we
+// fall back to a confidence-neutral line instead of advertising the gap.
+const COVERAGE_CALLOUT_THRESHOLD = 5;
 
 function fmt(d) {
   if (!d) return "";
@@ -16,8 +22,11 @@ export default function Home() {
 
   const counts = getCountryCounts();
   const countries = COUNTRIES.map((c) => ({ ...c, count: counts.get(c.code) || 0 }));
-  const popular = popularCountries().map((c) => ({ ...c, count: counts.get(c.code) || 0 }));
   const coveredCount = counts.size;
+  const trending = countries
+    .filter((c) => c.count > 0)
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 12);
 
   return (
     <main className="home">
@@ -26,26 +35,24 @@ export default function Home() {
           <span className="brand-dot" aria-hidden="true" />
           Emberline
         </Link>
-        <Link href="/countries" className="topnav__link">Countries</Link>
+        <div className="topnav__links">
+          <Link href="/#map" className="topnav__link">🌍 Explore</Link>
+          <Link href="/countries" className="topnav__link">📍 Countries</Link>
+        </div>
       </nav>
 
       <header className="hero">
         <p className="hero__eyebrow">🌍 World Pulse</p>
         <h1 className="hero__title">What the world is searching for, today.</h1>
         <p className="hero__sub">
-          {coveredCount > 0
-            ? `Live coverage in ${coveredCount} ${coveredCount === 1 ? "country" : "countries"}. Search any nation to jump straight to its stories.`
-            : "Search any country to jump straight to its stories."}
+          {coveredCount >= COVERAGE_CALLOUT_THRESHOLD
+            ? `Live coverage in ${coveredCount} countries. Search any nation to jump straight to its stories.`
+            : "Search any country for what's emerging there. New coverage added daily."}
         </p>
-        <CountryPicker
-          countries={countries}
-          popular={popular}
-          compact
-          popularLabel="Trending countries right now"
-        />
+        <CountryPicker countries={countries} compact showChips={false} />
       </header>
 
-      <section className="home__map" aria-label="World coverage map">
+      <section className="home__map" id="map" aria-label="World coverage map">
         <p className="section-label">🌎 Global Pulse</p>
         <WorldMap countries={countries} counts={counts} />
       </section>
@@ -59,6 +66,7 @@ export default function Home() {
             <CoverImage src={lead.cover} country={lead.country} className="lead__img" />
             <div className="lead__body">
               <div className="card__meta">
+                <span className="badge badge--hot">🔥 Trending</span>
                 {lead.country && <span className="tag">{countryName(lead.country.toUpperCase())}</span>}
                 {lead.tags?.[0] && <span className="topic">{lead.tags[0]}</span>}
                 <time>{fmt(lead.date)}</time>
@@ -88,6 +96,8 @@ export default function Home() {
           </Link>
         ))}
       </section>
+
+      <TrendingCountries countries={trending} />
     </main>
   );
 }
