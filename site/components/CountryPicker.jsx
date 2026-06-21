@@ -1,14 +1,17 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { flagEmoji } from "../lib/countries";
+import { IconSearch, IconArrowRight } from "./Icons";
 
 // Search-first country picker. Renders fully on the server with query=""
 // so crawlers and AI agents see every country link without running JS —
 // the search box is progressive enhancement on top of that, not a
 // requirement for discoverability.
 export default function CountryPicker({ countries, popular = [], compact = false, showChips = true, popularLabel = "Popular today" }) {
+  const router = useRouter();
   const [query, setQuery] = useState("");
 
   const results = useMemo(() => {
@@ -22,16 +25,18 @@ export default function CountryPicker({ countries, popular = [], compact = false
   const searching = query.trim().length > 0;
   const visible = compact && searching ? results.slice(0, 8) : results;
 
+  function handleSubmit(e) {
+    e.preventDefault();
+    if (results[0]) router.push(`/country/${results[0].code.toLowerCase()}`);
+  }
+
   return (
     <div className="picker">
       <label className="picker__label" htmlFor="country-search">
         Search countries
       </label>
-      <div className="picker__inputwrap">
-        <svg className="picker__icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-          <circle cx="9" cy="9" r="6.5" stroke="currentColor" strokeWidth="1.6" />
-          <path d="M14 14L18 18" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
-        </svg>
+      <form className="picker__inputwrap" role="search" onSubmit={handleSubmit}>
+        <IconSearch className="picker__icon" />
         <input
           id="country-search"
           type="search"
@@ -41,7 +46,10 @@ export default function CountryPicker({ countries, popular = [], compact = false
           onChange={(e) => setQuery(e.target.value)}
           autoComplete="off"
         />
-      </div>
+        <button type="submit" className="picker__submit" aria-label="Search">
+          <IconArrowRight className="picker__submit-icon" />
+        </button>
+      </form>
 
       {searching ? (
         <ul className="picker__results" role="listbox" aria-label="Matching countries">
@@ -91,7 +99,8 @@ export default function CountryPicker({ countries, popular = [], compact = false
 
       {compact && (
         <Link href="/countries" className="picker__more">
-          Browse all {countries.length} countries →
+          Browse all {countries.length} countries
+          <IconArrowRight className="picker__more-icon" />
         </Link>
       )}
     </div>

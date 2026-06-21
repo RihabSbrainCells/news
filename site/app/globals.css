@@ -66,13 +66,56 @@ a { color: inherit; text-decoration: none; }
 .topnav__links {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 14px;
 }
 .topnav__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   font-size: 0.9rem;
   color: var(--ink-soft);
 }
 .topnav__link:hover { color: var(--ember); }
+.topnav__icon { width: 16px; height: 16px; }
+
+/* Hamburger menu — native <details>, no JS. Mostly future-proofing: today
+   it just duplicates the Countries link, but gives the nav somewhere to
+   grow without another redesign. */
+.navmenu { position: relative; }
+.navmenu summary { list-style: none; cursor: pointer; }
+.navmenu summary::-webkit-details-marker { display: none; }
+.navmenu__summary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  color: var(--ink-soft);
+}
+.navmenu__summary:hover { color: var(--ember); background: var(--paper-2); }
+.navmenu__icon { width: 20px; height: 20px; }
+.navmenu__body {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 160px;
+  display: flex;
+  flex-direction: column;
+  padding: 8px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--paper);
+  box-shadow: 0 8px 24px rgba(26, 23, 20, 0.12);
+  z-index: 10;
+}
+.navmenu__link {
+  padding: 8px 10px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  color: var(--ink);
+}
+.navmenu__link:hover { background: var(--paper-2); color: var(--ember); }
 
 /* ---------- Hero ---------- */
 .hero {
@@ -81,12 +124,16 @@ a { color: inherit; text-decoration: none; }
 }
 .hero__eyebrow {
   margin: 0 0 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   font-size: 0.78rem;
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--ember);
 }
+.hero__eyebrow-icon { width: 14px; height: 14px; }
 /* Hero title is the largest type on the page — lead/card titles step down
    from here so they read as a clear hierarchy instead of competing. */
 .hero__title {
@@ -110,11 +157,10 @@ a { color: inherit; text-decoration: none; }
   text-transform: uppercase;
   color: var(--ink-soft);
 }
+.section-label__icon { width: 13px; height: 13px; vertical-align: -2px; margin-right: 2px; }
 
 /* ---------- Home layout ---------- */
 .home { max-width: var(--max); margin: 0 auto; padding: 0 24px 80px; }
-.home__map { padding: 28px 0; border-bottom: 1px solid var(--line); }
-.home__map .section-label { margin-bottom: 16px; }
 
 /* Country tag uses the wayfinding blue (matches map/links), not the
    trending/breaking orange — keeps the badge the only "loud" accent. */
@@ -144,11 +190,21 @@ a { color: inherit; text-decoration: none; }
   padding: 34px 0;
   border-bottom: 1px solid var(--line);
 }
+.lead__media { position: relative; width: 100%; }
 .lead__img {
+  display: block;
   width: 100%;
   aspect-ratio: 16 / 10;
   object-fit: cover;
   border-radius: 4px;
+}
+.lead__overlays {
+  position: absolute;
+  inset: 12px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  pointer-events: none;
 }
 .lead__title {
   font-size: clamp(1.5rem, 2.8vw, 2.1rem);
@@ -158,19 +214,22 @@ a { color: inherit; text-decoration: none; }
 .lead:hover .lead__title { color: var(--ember); }
 .lead__sum { color: var(--ink-soft); font-size: 1.05rem; margin: 0; }
 .lead__cta {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   margin-top: 14px;
   font-size: 0.92rem;
   font-weight: 600;
   color: var(--ember);
 }
+.lead__cta-icon { width: 15px; height: 15px; }
 
 /* Urgency badge on the lead card — kept small so it flags the story
    without outweighing the headline it sits above. */
 .badge {
   display: inline-flex;
   align-items: center;
-  gap: 3px;
+  gap: 4px;
   padding: 2px 8px;
   border-radius: 999px;
   font-size: 0.62rem;
@@ -179,6 +238,14 @@ a { color: inherit; text-decoration: none; }
   text-transform: uppercase;
 }
 .badge--hot { background: var(--ember); color: var(--paper); }
+.badge__icon { width: 7px; height: 7px; }
+.badge--time {
+  background: rgba(250, 247, 242, 0.92);
+  color: var(--ink);
+  text-transform: none;
+  font-size: 0.74rem;
+  font-weight: 600;
+}
 
 /* Grid */
 .grid {
@@ -342,7 +409,7 @@ a { color: inherit; text-decoration: none; }
 .picker__input {
   width: 100%;
   font-size: 1.08rem;
-  padding: 16px 18px 16px 46px;
+  padding: 16px 56px 16px 46px;
   border: 1px solid var(--line);
   border-radius: 8px;
   background: var(--paper);
@@ -353,6 +420,24 @@ a { color: inherit; text-decoration: none; }
   outline: 2px solid var(--ember);
   outline-offset: 1px;
 }
+.picker__submit {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 50%;
+  background: var(--ember);
+  color: var(--paper);
+  cursor: pointer;
+}
+.picker__submit:hover { background: #c23a22; }
+.picker__submit-icon { width: 17px; height: 17px; }
 
 .picker__section-label {
   margin: 22px 0 10px;
@@ -427,22 +512,42 @@ a { color: inherit; text-decoration: none; }
   font-size: 0.9rem;
 }
 .picker__more {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   margin-top: 18px;
   font-size: 0.88rem;
   color: var(--ember);
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-underline-offset: 3px;
 }
+.picker__more-icon { width: 13px; height: 13px; }
 
-/* ---------- Trending countries (homepage, below the fold) ---------- */
+/* ---------- Trending countries + world-map toggle ---------- */
 .trending { padding: 8px 0 32px; }
 .trending .section-label { margin-bottom: 14px; }
+
+/* Chips and the map-toggle card share one row on a flex-wrap line — the
+   toggle card forces itself to a full-width second line (via flex-basis)
+   only once it's opened, instead of needing a separate section/scroll
+   context to lay out the expanded map. */
+.trending__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 10px;
+}
 .trending__scroll {
+  flex: 1 1 240px;
+  min-width: 0;
   display: flex;
   gap: 10px;
   overflow-x: auto;
   padding-bottom: 6px;
   -webkit-overflow-scrolling: touch;
 }
+.trending__empty { flex: 1 1 240px; margin: 0; padding: 10px 0; color: var(--ink-soft); font-size: 0.9rem; }
 .trending__chip {
   flex: none;
   display: inline-flex;
@@ -459,26 +564,34 @@ a { color: inherit; text-decoration: none; }
 .trending__count { font-size: 0.72rem; color: var(--ink-soft); }
 .trending__chip:hover .trending__count { color: inherit; }
 
-/* Map disclosure — collapsed behind a button on small screens (native
+/* Map disclosure — collapsed behind a small card on small screens (native
    <details>, no JS required), forced open on desktop where there's room
    for it to earn its keep. */
+.maptoggle { flex: 0 0 auto; }
+.maptoggle[open] { flex: 1 1 100%; }
 .maptoggle summary { list-style: none; cursor: pointer; }
 .maptoggle summary::-webkit-details-marker { display: none; }
 .maptoggle__summary {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 18px;
+  width: 132px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 12px 14px;
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: 10px;
   background: var(--paper-2);
-  font-size: 0.92rem;
+  font-size: 0.86rem;
   font-weight: 600;
   color: var(--ink);
 }
+.maptoggle__icon { width: 18px; height: 18px; color: var(--country); }
+.maptoggle__arrow { width: 14px; height: 14px; color: var(--ember); }
 .maptoggle__summary:hover { border-color: var(--ember); color: var(--ember); }
 .maptoggle[open] .maptoggle__summary { margin-bottom: 16px; }
+.maptoggle__body .section-label { margin-bottom: 16px; }
 @media (min-width: 641px) {
+  .maptoggle { flex: 1 1 100%; }
   .maptoggle__summary { display: none; }
   .maptoggle__body { display: block !important; }
 }
@@ -557,18 +670,17 @@ a { color: inherit; text-decoration: none; }
   .grid { grid-template-columns: 1fr; }
 }
 
-/* Mobile reads news first: trending countries surface right under the
-   hero, the map drops behind its toggle further down. Desktop keeps the
-   source order (hero, map, top story, more stories, trending). */
+/* Mobile reads news first: trending countries (with the map collapsed
+   behind its toggle card) surface right under the hero. Desktop keeps the
+   source order (hero, trending + map, top story, more stories). */
 @media (max-width: 640px) {
   .home { display: flex; flex-direction: column; }
   .home > .topnav { order: 1; }
   .home > .hero { order: 2; }
   .home > .trending { order: 3; }
-  .home > .home__map { order: 4; }
-  .home > .empty { order: 5; }
-  .home > .home__lead { order: 6; }
-  .home > .home__more { order: 7; }
+  .home > .empty { order: 4; }
+  .home > .home__lead { order: 5; }
+  .home > .home__more { order: 6; }
 }
 
 @media (prefers-reduced-motion: reduce) {
