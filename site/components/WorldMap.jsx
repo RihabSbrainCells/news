@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ComposableMap, Geographies, Geography } from "react-simple-maps";
 import worldAtlas from "world-atlas/countries-110m.json";
@@ -24,11 +24,13 @@ const TIER_FILL = {
 export default function WorldMap({ countries, counts }) {
   const router = useRouter();
   const [hovered, setHovered] = useState(null);
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
   const nameByCode = useMemo(() => new Map(countries.map((c) => [c.code, c.name])), [countries]);
 
   return (
-    <div className="worldmap">
+    <div className={`worldmap${mounted ? "" : " worldmap--loading"}`}>
       <ComposableMap
         projectionConfig={{ scale: 148 }}
         width={800}

@@ -76,7 +76,7 @@ a { color: inherit; text-decoration: none; }
 
 /* ---------- Hero ---------- */
 .hero {
-  padding: 32px 0 40px;
+  padding: 26px 0 30px;
   border-bottom: 1px solid var(--line);
 }
 .hero__eyebrow {
@@ -103,7 +103,7 @@ a { color: inherit; text-decoration: none; }
 }
 
 .section-label {
-  margin: 28px 0 4px;
+  margin: 20px 0 4px;
   font-size: 0.7rem;
   font-weight: 600;
   letter-spacing: 0.08em;
@@ -113,16 +113,18 @@ a { color: inherit; text-decoration: none; }
 
 /* ---------- Home layout ---------- */
 .home { max-width: var(--max); margin: 0 auto; padding: 0 24px 80px; }
-.home__map { padding: 40px 0; border-bottom: 1px solid var(--line); }
+.home__map { padding: 28px 0; border-bottom: 1px solid var(--line); }
 .home__map .section-label { margin-bottom: 16px; }
 
+/* Country tag uses the wayfinding blue (matches map/links), not the
+   trending/breaking orange — keeps the badge the only "loud" accent. */
 .tag {
   display: inline-block;
   font-size: 0.7rem;
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--ember);
+  color: var(--country);
 }
 .card__meta, .article__meta {
   display: flex;
@@ -139,7 +141,7 @@ a { color: inherit; text-decoration: none; }
   grid-template-columns: 1.1fr 1fr;
   gap: 36px;
   align-items: center;
-  padding: 44px 0;
+  padding: 34px 0;
   border-bottom: 1px solid var(--line);
 }
 .lead__img {
@@ -155,15 +157,23 @@ a { color: inherit; text-decoration: none; }
 }
 .lead:hover .lead__title { color: var(--ember); }
 .lead__sum { color: var(--ink-soft); font-size: 1.05rem; margin: 0; }
+.lead__cta {
+  display: inline-block;
+  margin-top: 14px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--ember);
+}
 
-/* Urgency badge on the lead card — distinct fill, not just another label */
+/* Urgency badge on the lead card — kept small so it flags the story
+   without outweighing the headline it sits above. */
 .badge {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 3px 10px;
+  gap: 3px;
+  padding: 2px 8px;
   border-radius: 999px;
-  font-size: 0.7rem;
+  font-size: 0.62rem;
   font-weight: 700;
   letter-spacing: 0.02em;
   text-transform: uppercase;
@@ -191,7 +201,7 @@ a { color: inherit; text-decoration: none; }
   aspect-ratio: 16 / 10;
   object-fit: cover;
 }
-.card__body { padding: 18px 24px 26px; }
+.card__body { padding: 16px 22px 22px; }
 .card__title {
   font-size: 1.28rem;
   line-height: 1.18;
@@ -225,7 +235,7 @@ a { color: inherit; text-decoration: none; }
   font-weight: 600;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: var(--country);
+  color: var(--ink-soft);
 }
 .readtime { color: var(--ink-soft); }
 .readtime::before { content: "·"; margin-right: 12px; }
@@ -315,13 +325,26 @@ a { color: inherit; text-decoration: none; }
   color: var(--ink-soft);
   margin-bottom: 8px;
 }
+.picker__inputwrap {
+  position: relative;
+  max-width: 460px;
+}
+.picker__icon {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  width: 19px;
+  height: 19px;
+  transform: translateY(-50%);
+  color: var(--ink-soft);
+  pointer-events: none;
+}
 .picker__input {
   width: 100%;
-  max-width: 420px;
-  font-size: 1rem;
-  padding: 12px 14px;
+  font-size: 1.08rem;
+  padding: 16px 18px 16px 46px;
   border: 1px solid var(--line);
-  border-radius: 6px;
+  border-radius: 8px;
   background: var(--paper);
   color: var(--ink);
   font-family: inherit;
@@ -411,7 +434,7 @@ a { color: inherit; text-decoration: none; }
 }
 
 /* ---------- Trending countries (homepage, below the fold) ---------- */
-.trending { padding: 8px 0 40px; }
+.trending { padding: 8px 0 32px; }
 .trending .section-label { margin-bottom: 14px; }
 .trending__scroll {
   display: flex;
@@ -436,8 +459,49 @@ a { color: inherit; text-decoration: none; }
 .trending__count { font-size: 0.72rem; color: var(--ink-soft); }
 .trending__chip:hover .trending__count { color: inherit; }
 
+/* Map disclosure — collapsed behind a button on small screens (native
+   <details>, no JS required), forced open on desktop where there's room
+   for it to earn its keep. */
+.maptoggle summary { list-style: none; cursor: pointer; }
+.maptoggle summary::-webkit-details-marker { display: none; }
+.maptoggle__summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 18px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--paper-2);
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+.maptoggle__summary:hover { border-color: var(--ember); color: var(--ember); }
+.maptoggle[open] .maptoggle__summary { margin-bottom: 16px; }
+@media (min-width: 641px) {
+  .maptoggle__summary { display: none; }
+  .maptoggle__body { display: block !important; }
+}
+
 /* ---------- World map ---------- */
-.worldmap { border: 1px solid var(--line); border-radius: 8px; padding: 16px; background: var(--paper-2); }
+.worldmap { border: 1px solid var(--line); border-radius: 8px; padding: 16px; background: var(--paper-2); position: relative; }
+.worldmap--loading::after {
+  content: "Loading map…";
+  position: absolute;
+  inset: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  background: var(--paper-2);
+  color: var(--ink-soft);
+  font-size: 0.85rem;
+  animation: worldmap-pulse 1.4s ease-in-out infinite;
+}
+@keyframes worldmap-pulse {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 1; }
+}
 .worldmap__footer {
   display: flex;
   flex-wrap: wrap;
@@ -491,7 +555,20 @@ a { color: inherit; text-decoration: none; }
 }
 @media (max-width: 560px) {
   .grid { grid-template-columns: 1fr; }
-  .masthead { padding-top: 40px; }
+}
+
+/* Mobile reads news first: trending countries surface right under the
+   hero, the map drops behind its toggle further down. Desktop keeps the
+   source order (hero, map, top story, more stories, trending). */
+@media (max-width: 640px) {
+  .home { display: flex; flex-direction: column; }
+  .home > .topnav { order: 1; }
+  .home > .hero { order: 2; }
+  .home > .trending { order: 3; }
+  .home > .home__map { order: 4; }
+  .home > .empty { order: 5; }
+  .home > .home__lead { order: 6; }
+  .home > .home__more { order: 7; }
 }
 
 @media (prefers-reduced-motion: reduce) {

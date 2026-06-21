@@ -27,15 +27,21 @@ export default function CountryPicker({ countries, popular = [], compact = false
       <label className="picker__label" htmlFor="country-search">
         Search countries
       </label>
-      <input
-        id="country-search"
-        type="search"
-        className="picker__input"
-        placeholder="Search countries, e.g. Morocco"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        autoComplete="off"
-      />
+      <div className="picker__inputwrap">
+        <svg className="picker__icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+          <circle cx="9" cy="9" r="6.5" stroke="currentColor" strokeWidth="1.6" />
+          <path d="M14 14L18 18" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+        </svg>
+        <input
+          id="country-search"
+          type="search"
+          className="picker__input"
+          placeholder="Search countries, e.g. Morocco"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          autoComplete="off"
+        />
+      </div>
 
       {searching ? (
         <ul className="picker__results" role="listbox" aria-label="Matching countries">

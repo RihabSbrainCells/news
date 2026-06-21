@@ -36,31 +36,35 @@ export default function Home() {
           Emberline
         </Link>
         <div className="topnav__links">
-          <Link href="/#map" className="topnav__link">🌍 Explore</Link>
           <Link href="/countries" className="topnav__link">📍 Countries</Link>
         </div>
       </nav>
 
       <header className="hero">
         <p className="hero__eyebrow">🌍 World Pulse</p>
-        <h1 className="hero__title">What the world is searching for, today.</h1>
+        <h1 className="hero__title">Track what every country is talking about, today.</h1>
         <p className="hero__sub">
           {coveredCount >= COVERAGE_CALLOUT_THRESHOLD
-            ? `Live coverage in ${coveredCount} countries. Search any nation to jump straight to its stories.`
-            : "Search any country for what's emerging there. New coverage added daily."}
+            ? `Live coverage in ${coveredCount} countries — explore the biggest stories from each.`
+            : "Search any country for the stories shaping it right now."}
         </p>
         <CountryPicker countries={countries} compact showChips={false} />
       </header>
 
-      <section className="home__map" id="map" aria-label="World coverage map">
-        <p className="section-label">🌎 Global Pulse</p>
-        <WorldMap countries={countries} counts={counts} />
+      <section className="home__map" aria-label="World coverage map">
+        <details className="maptoggle">
+          <summary className="maptoggle__summary">🗺️ View world map</summary>
+          <div className="maptoggle__body">
+            <p className="section-label">🌎 Global Pulse</p>
+            <WorldMap countries={countries} counts={counts} />
+          </div>
+        </details>
       </section>
 
       {articles.length === 0 && <p className="empty">No stories yet. Check back shortly.</p>}
 
       {lead && (
-        <>
+        <section className="home__lead" aria-label="Top story">
           <p className="section-label">Top Story</p>
           <Link href={`/article/${lead.slug}`} className="lead">
             <CoverImage src={lead.cover} country={lead.country} className="lead__img" />
@@ -74,28 +78,33 @@ export default function Home() {
               </div>
               <h2 className="lead__title">{lead.title}</h2>
               {lead.summary && <p className="lead__sum">{lead.summary}</p>}
+              <span className="lead__cta">Read the full story →</span>
             </div>
           </Link>
-        </>
+        </section>
       )}
 
-      {rest.length > 0 && <p className="section-label">More Stories</p>}
-      <section className="grid">
-        {rest.map((a) => (
-          <Link key={a.slug} href={`/article/${a.slug}`} className="card">
-            <CoverImage src={a.cover} country={a.country} className="card__img" />
-            <div className="card__body">
-              <div className="card__meta">
-                {a.country && <span className="tag">{countryName(a.country.toUpperCase())}</span>}
-                <time>{fmt(a.date)}</time>
-                <span className="readtime">{a.readingMinutes} min read</span>
-              </div>
-              <h3 className="card__title">{a.title}</h3>
-              {a.summary && <p className="card__sum">{a.summary}</p>}
-            </div>
-          </Link>
-        ))}
-      </section>
+      {rest.length > 0 && (
+        <section className="home__more" aria-label="More stories">
+          <p className="section-label">More Stories</p>
+          <div className="grid">
+            {rest.map((a) => (
+              <Link key={a.slug} href={`/article/${a.slug}`} className="card">
+                <CoverImage src={a.cover} country={a.country} className="card__img" />
+                <div className="card__body">
+                  <div className="card__meta">
+                    {a.country && <span className="tag">{countryName(a.country.toUpperCase())}</span>}
+                    <time>{fmt(a.date)}</time>
+                    <span className="readtime">{a.readingMinutes} min read</span>
+                  </div>
+                  <h3 className="card__title">{a.title}</h3>
+                  {a.summary && <p className="card__sum">{a.summary}</p>}
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
 
       <TrendingCountries countries={trending} />
     </main>
