@@ -8,7 +8,7 @@ import { flagEmoji } from "../lib/countries";
 // so crawlers and AI agents see every country link without running JS —
 // the search box is progressive enhancement on top of that, not a
 // requirement for discoverability.
-export default function CountryPicker({ countries, popular, compact = false }) {
+export default function CountryPicker({ countries, popular, compact = false, popularLabel = "Popular today" }) {
   const [query, setQuery] = useState("");
 
   const results = useMemo(() => {
@@ -52,11 +52,14 @@ export default function CountryPicker({ countries, popular, compact = false }) {
         </ul>
       ) : (
         <>
-          <p className="picker__section-label">Popular today</p>
+          <p className="picker__section-label">{popularLabel}</p>
           <div className="picker__chips">
             {popular.map((c) => (
               <Link key={c.code} href={`/country/${c.code.toLowerCase()}`} className="picker__chip">
                 <span aria-hidden="true">{flagEmoji(c.code)}</span> {c.name}
+                <span className="picker__chip-count">
+                  {c.count ? `${c.count} ${c.count === 1 ? "story" : "stories"}` : "no stories yet"}
+                </span>
               </Link>
             ))}
           </div>

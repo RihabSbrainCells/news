@@ -4,6 +4,7 @@ import { marked } from "marked";
 import { getArticle, getAllSlugs } from "../../../lib/content";
 import { countryName, flagEmoji } from "../../../lib/countries";
 import { newsArticleJsonLd, breadcrumbJsonLd } from "../../../lib/seo";
+import CoverImage from "../../../components/CoverImage";
 
 // fully static — no DB, no ISR needed; rebuild happens on git push
 export const dynamicParams = false;
@@ -76,36 +77,34 @@ export default function ArticlePage({ params }) {
             </Link>
           )}
           <time>{fmt(a.date)}</time>
+          <span className="readtime">{a.readingMinutes} min read</span>
         </div>
         <h1>{a.title}</h1>
         {a.summary && <p className="standfirst">{a.summary}</p>}
       </header>
 
-      {a.cover && (
-        <figure className="article__cover">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={a.cover} alt="" />
-          {a.credit?.source && (
-            <figcaption>
-              {a.credit.author ? (
-                <>
-                  Photo:{" "}
-                  {a.credit.author_url ? (
-                    <a href={a.credit.author_url} target="_blank" rel="noopener noreferrer nofollow">
-                      {a.credit.author}
-                    </a>
-                  ) : (
-                    a.credit.author
-                  )}{" "}
-                  / {a.credit.source}
-                </>
-              ) : (
-                a.credit.source
-              )}
-            </figcaption>
-          )}
-        </figure>
-      )}
+      <figure className="article__cover">
+        <CoverImage src={a.cover} country={a.country} alt="" />
+        {a.cover && a.credit?.source && (
+          <figcaption>
+            {a.credit.author ? (
+              <>
+                Photo:{" "}
+                {a.credit.author_url ? (
+                  <a href={a.credit.author_url} target="_blank" rel="noopener noreferrer nofollow">
+                    {a.credit.author}
+                  </a>
+                ) : (
+                  a.credit.author
+                )}{" "}
+                / {a.credit.source}
+              </>
+            ) : (
+              a.credit.source
+            )}
+          </figcaption>
+        )}
+      </figure>
 
       <div className="prose" dangerouslySetInnerHTML={{ __html: html }} />
 

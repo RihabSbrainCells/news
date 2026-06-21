@@ -3,7 +3,11 @@
   --ink-soft: #5c534b;
   --paper: #faf7f2;
   --paper-2: #f1ebe1;
-  --ember: #d6452a;     /* the single accent — used sparingly */
+  --ember: #d6452a;     /* primary accent + "heavy coverage" */
+  --trend: #f0973c;     /* trending / "light coverage" */
+  --country: #2563eb;   /* country wayfinding (map hover, links) */
+  --quiet: #ddd3c2;     /* map: tracked country, no coverage yet */
+  --unmapped: #ece6da;  /* map: territory we don't track */
   --line: #e2d9cc;
   --max: 1180px;
   --measure: 680px;
@@ -21,13 +25,15 @@ body {
   line-height: 1.6;
 }
 
-/* Display face: a high-contrast serif, used only for headlines/masthead.
+/* Display face: a high-contrast serif, used only for headlines/brand.
    Falls back gracefully if you don't add a webfont. */
-.masthead__name,
+.topnav__brand,
+.hero__title,
 .lead__title,
 .card__title,
 .article h1,
-.sources h2 {
+.sources h2,
+.page__head h1 {
   font-family: "Fraunces", "Spectral", Georgia, "Times New Roman", serif;
   font-weight: 600;
   letter-spacing: -0.01em;
@@ -35,37 +41,73 @@ body {
 
 a { color: inherit; text-decoration: none; }
 
-/* ---------- Masthead ---------- */
-.masthead {
-  max-width: var(--max);
-  margin: 0 auto;
-  padding: 56px 24px 28px;
-  border-bottom: 1px solid var(--line);
-}
-.masthead__mark {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-.masthead__ember {
-  width: 14px;
-  height: 14px;
+.brand-dot {
+  width: 12px;
+  height: 12px;
   border-radius: 50%;
   background: radial-gradient(circle at 35% 30%, #ff7a4d, var(--ember));
-  box-shadow: 0 0 18px rgba(214, 69, 42, 0.55);
+  box-shadow: 0 0 14px rgba(214, 69, 42, 0.55);
+  flex: none;
 }
-.masthead__name {
-  font-size: clamp(2rem, 5vw, 3.2rem);
-  line-height: 1;
+
+/* ---------- Top nav ---------- */
+.topnav {
+  padding: 24px 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
-.masthead__tag {
-  margin: 10px 0 0 28px;
+.topnav__brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.3rem;
+}
+.topnav__link {
+  font-size: 0.9rem;
   color: var(--ink-soft);
-  font-size: 0.98rem;
+}
+.topnav__link:hover { color: var(--ember); }
+
+/* ---------- Hero ---------- */
+.hero {
+  padding: 32px 0 40px;
+  border-bottom: 1px solid var(--line);
+}
+.hero__eyebrow {
+  margin: 0 0 8px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ember);
+}
+.hero__title {
+  margin: 0;
+  font-size: clamp(1.7rem, 3.4vw, 2.5rem);
+  line-height: 1.12;
+  max-width: 18ch;
+}
+.hero__sub {
+  margin: 12px 0 24px;
+  color: var(--ink-soft);
+  font-size: 1rem;
+  max-width: 56ch;
+}
+
+.section-label {
+  margin: 28px 0 4px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
 }
 
 /* ---------- Home layout ---------- */
 .home { max-width: var(--max); margin: 0 auto; padding: 0 24px 80px; }
+.home__map { padding: 40px 0; border-bottom: 1px solid var(--line); }
+.home__map .section-label { margin-bottom: 16px; }
 
 .tag {
   display: inline-block;
@@ -118,10 +160,17 @@ a { color: inherit; text-decoration: none; }
 }
 .card {
   background: var(--paper);
-  padding: 26px 24px 30px;
+  display: flex;
+  flex-direction: column;
   transition: background 0.18s ease;
 }
 .card:hover { background: var(--paper-2); }
+.card__img {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+}
+.card__body { padding: 18px 24px 26px; }
 .card__title {
   font-size: 1.28rem;
   line-height: 1.18;
@@ -139,6 +188,26 @@ a { color: inherit; text-decoration: none; }
 }
 
 .empty { padding: 80px 0; text-align: center; color: var(--ink-soft); }
+
+/* Cover fallback (gradient + flag, used when an article has no photo) */
+.cover-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.cover-fallback__flag { font-size: 2.6rem; filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.25)); }
+
+/* Card meta: tag, topic, date, read time can all be present at once */
+.card__meta, .article__meta { flex-wrap: wrap; row-gap: 4px; }
+.topic {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--country);
+}
+.readtime { color: var(--ink-soft); }
+.readtime::before { content: "·"; margin-right: 12px; }
 
 /* ---------- Article ---------- */
 .article { max-width: var(--measure); margin: 0 auto; padding: 40px 24px 80px; }
@@ -164,11 +233,14 @@ a { color: inherit; text-decoration: none; }
 .article__cover {
   margin: 8px 0 28px;
 }
-.article__cover img {
+.article__cover img,
+.article__cover .cover-fallback {
   width: 100%;
+  aspect-ratio: 16 / 9;
   border-radius: 4px;
   display: block;
 }
+.article__cover .cover-fallback__flag { font-size: 3.4rem; }
 .article__cover figcaption {
   margin-top: 8px;
   font-size: 0.78rem;
@@ -254,15 +326,21 @@ a { color: inherit; text-decoration: none; }
 }
 .picker__chip {
   display: inline-flex;
-  align-items: center;
+  flex-wrap: wrap;
+  align-items: baseline;
   gap: 6px;
-  padding: 7px 13px;
+  padding: 9px 14px;
   border: 1px solid var(--line);
   border-radius: 999px;
   font-size: 0.88rem;
   background: var(--paper);
 }
 .picker__chip:hover { border-color: var(--ember); color: var(--ember); }
+.picker__chip-count {
+  font-size: 0.72rem;
+  color: var(--ink-soft);
+}
+.picker__chip:hover .picker__chip-count { color: inherit; }
 
 .picker__results {
   list-style: none;
@@ -310,6 +388,32 @@ a { color: inherit; text-decoration: none; }
   font-size: 0.88rem;
   color: var(--ember);
 }
+
+/* ---------- World map ---------- */
+.worldmap { border: 1px solid var(--line); border-radius: 8px; padding: 16px; background: var(--paper-2); }
+.worldmap__footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+.worldmap__hint { margin: 0; font-size: 0.86rem; color: var(--ink-soft); min-height: 1.2em; }
+.worldmap__legend {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+}
+.worldmap__legend li { display: flex; align-items: center; gap: 6px; }
+.worldmap__swatch { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
 
 /* ---------- Generic interior page (countries, country) ---------- */
 .page { max-width: var(--max); margin: 0 auto; padding: 40px 24px 80px; }

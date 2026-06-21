@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { getArticlesByCountry, getCountryCounts } from "../../../lib/content";
 import { COUNTRIES, countryName, flagEmoji } from "../../../lib/countries";
 import { countryCollectionJsonLd, breadcrumbJsonLd } from "../../../lib/seo";
+import CoverImage from "../../../components/CoverImage";
 
 const VALID_CODES = new Set(COUNTRIES.map((c) => c.code));
 
@@ -66,20 +67,25 @@ export default function CountryPage({ params }) {
         <h1>
           <span aria-hidden="true">{flagEmoji(code)}</span> {name}
         </h1>
+        <p className="page__lede">
+          {articles.length > 0
+            ? `${articles.length} ${articles.length === 1 ? "story" : "stories"}, updated daily.`
+            : `No stories from ${name} yet — check back soon.`}
+        </p>
       </header>
-
-      {articles.length === 0 && (
-        <p className="empty">No stories from {name} yet. Check back soon.</p>
-      )}
 
       <section className="grid">
         {articles.map((a) => (
           <Link key={a.slug} href={`/article/${a.slug}`} className="card">
-            <div className="card__meta">
-              <time>{fmt(a.date)}</time>
+            <CoverImage src={a.cover} country={a.country} className="card__img" />
+            <div className="card__body">
+              <div className="card__meta">
+                <time>{fmt(a.date)}</time>
+                <span className="readtime">{a.readingMinutes} min read</span>
+              </div>
+              <h3 className="card__title">{a.title}</h3>
+              {a.summary && <p className="card__sum">{a.summary}</p>}
             </div>
-            <h3 className="card__title">{a.title}</h3>
-            {a.summary && <p className="card__sum">{a.summary}</p>}
           </Link>
         ))}
       </section>

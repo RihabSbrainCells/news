@@ -12,6 +12,11 @@ function safeParse(json, fallback) {
   }
 }
 
+function readingMinutes(body) {
+  const words = body.trim().split(/\s+/).filter(Boolean).length;
+  return Math.max(1, Math.round(words / 200));
+}
+
 function readAll() {
   if (!fs.existsSync(CONTENT_DIR)) return [];
   return fs
@@ -30,6 +35,7 @@ function readAll() {
         credit: typeof data.credit === "string" ? safeParse(data.credit, null) : data.credit || null,
         tags: Array.isArray(data.tags) ? data.tags : [],
         sources: typeof data.sources === "string" ? safeParse(data.sources, []) : data.sources || [],
+        readingMinutes: readingMinutes(content),
         body: content,
       };
     });
